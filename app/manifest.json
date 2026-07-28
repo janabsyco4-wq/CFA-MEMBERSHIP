@@ -1,0 +1,21 @@
+{
+  "name": "Chamber of Food & Agriculture Pakistan",
+  "short_name": "CFA Pakistan",
+  "description": "Empowering Farmers, Feeding the Future",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16A34A",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
