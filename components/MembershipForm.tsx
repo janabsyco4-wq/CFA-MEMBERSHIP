@@ -40,12 +40,16 @@ const INITIAL: FormData = {
 function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<HTMLDivElement> }) {
   const Field = ({ label, value, half }: { label: string; value: string; half?: boolean }) => (
     <div style={{ flex: half ? '0 0 48%' : '1', marginBottom: '18px' }}>
-      <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px', fontWeight: '700',
+      {/* Label */}
+      <div style={{ fontSize: '10px', color: '#666', marginBottom: '4px', fontWeight: '700',
         letterSpacing: '0.6px', textTransform: 'uppercase' }}>{label}</div>
-      <div style={{ borderBottom: '1.5px solid #222', fontSize: '13px', color: '#111',
-        padding: '2px 4px 3px 4px', minHeight: '22px', letterSpacing: '0.3px' }}>
+      {/* Value sits ABOVE the line */}
+      <div style={{ fontSize: '13px', color: '#111', letterSpacing: '0.3px',
+        paddingBottom: '4px', paddingLeft: '2px', minHeight: '18px', lineHeight: '1.4' }}>
         {value || '\u00A0'}
       </div>
+      {/* Underline is a separate element BELOW the text */}
+      <div style={{ borderBottom: '1.5px solid #222', marginTop: '0px' }} />
     </div>
   );
 
