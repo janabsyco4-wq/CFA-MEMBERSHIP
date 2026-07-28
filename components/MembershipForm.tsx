@@ -44,23 +44,25 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       <div style={{
         fontSize: '10px', color: '#666', fontWeight: '700',
         letterSpacing: '0.6px', textTransform: 'uppercase',
-        marginBottom: '6px'
+        marginBottom: '4px'
       }}>{label}</div>
-      {/* Row: text left, line stretches full width underneath via position trick */}
-      <div style={{ position: 'relative', paddingBottom: '6px' }}>
-        <div style={{
-          fontSize: '13px', color: '#111', letterSpacing: '0.3px',
-          lineHeight: '1.4', paddingLeft: '2px',
-          whiteSpace: 'pre-wrap', wordBreak: 'break-word'
-        }}>
-          {value || '\u00A0'}
-        </div>
-        {/* Hard underline, always below text */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          borderBottom: '1.5px solid #222'
-        }} />
+      {/* Value text — sits clearly above the line */}
+      <div style={{
+        fontSize: '13px', color: '#111', letterSpacing: '0.3px',
+        lineHeight: '1.5', paddingLeft: '2px',
+        marginBottom: '4px',
+        whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+        minHeight: '20px'
+      }}>
+        {value || '\u00A0'}
       </div>
+      {/* Line as a solid background div — not a CSS border */}
+      <div style={{
+        height: '1.5px',
+        backgroundColor: '#222',
+        width: '100%',
+        display: 'block',
+      }} />
     </div>
   );
 
