@@ -97,10 +97,7 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       </div>
 
       {/* Fields */}
-      <div style={{ display: 'flex', gap: '28px' }}>
-        <Field label="Full Name" value={`${form.firstName} ${form.lastName}`.trim()} half />
-        <Field label="City" value={form.city} half />
-      </div>
+      <Field label="Full Name" value={`${form.firstName} ${form.lastName}`.trim()} />
       <Field label="Address" value={form.address} />
       <div style={{ display: 'flex', gap: '28px' }}>
         <Field label="City" value={form.city} half />
