@@ -263,9 +263,8 @@ export default function MembershipForm() {
       el.style.visibility = 'visible';
       await new Promise(r => setTimeout(r, 100));
       const canvas = await html2canvas(el, {
-        scale: 5, useCORS: true, backgroundColor: '#ffffff',
+        scale: 3, useCORS: true, backgroundColor: '#ffffff',
         logging: false, width: 794, height: el.scrollHeight, windowWidth: 794,
-        imageTimeout: 0,
       });
       el.style.visibility = 'hidden';
 
