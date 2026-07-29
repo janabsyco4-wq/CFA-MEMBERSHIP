@@ -17,11 +17,12 @@ interface FormData {
   firstName: string;
   lastName: string;
   address: string;
-  city: string;
+  district: string;
   phoneNo: string;
   emailAddress: string;
   cnicNo: string;
   ntnNumber: string;
+  membershipNo: string;
   membershipCategory: string;
   membershipFee: string;
   businessName: string;
@@ -31,8 +32,8 @@ interface FormData {
 
 const INITIAL: FormData = {
   firstName: '', lastName: '',
-  address: '', city: '', phoneNo: '', emailAddress: '',
-  cnicNo: '', ntnNumber: '', membershipCategory: '',
+  address: '', district: '', phoneNo: '', emailAddress: '',
+  cnicNo: '', ntnNumber: '', membershipNo: '', membershipCategory: '',
   membershipFee: '', businessName: '', businessType: '', photo: '',
 };
 
@@ -97,10 +98,13 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       </div>
 
       {/* Fields */}
-      <Field label="Full Name" value={`${form.firstName} ${form.lastName}`.trim()} />
+      <div style={{ display: 'flex', gap: '28px' }}>
+        <Field label="Full Name" value={`${form.firstName} ${form.lastName}`.trim()} half />
+        <Field label="Membership No." value={form.membershipNo} half />
+      </div>
       <Field label="Address" value={form.address} />
       <div style={{ display: 'flex', gap: '28px' }}>
-        <Field label="City" value={form.city} half />
+        <Field label="District" value={form.district} half />
         <Field label="Phone Number" value={form.phoneNo} half />
       </div>
       <div style={{ display: 'flex', gap: '28px' }}>
@@ -194,16 +198,12 @@ export default function MembershipForm() {
     if (!form.firstName.trim()) e.firstName = 'Required';
     if (!form.lastName.trim()) e.lastName = 'Required';
     if (!form.address.trim()) e.address = 'Required';
-    if (!form.city.trim()) e.city = 'Required';
+    if (!form.district.trim()) e.district = 'Required';
     if (!/^(\+92|0)[0-9]{10}$/.test(form.phoneNo.replace(/\s/g, '')))
       e.phoneNo = 'Valid Pakistani number (03XXXXXXXXX)';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.emailAddress))
-      e.emailAddress = 'Enter a valid email';
     if (!/^\d{5}-\d{7}-\d$/.test(form.cnicNo))
       e.cnicNo = 'Format: XXXXX-XXXXXXX-X';
-    if (!form.ntnNumber.trim()) e.ntnNumber = 'Required';
     if (!form.membershipCategory) e.membershipCategory = 'Select a category';
-    if (!form.businessName.trim()) e.businessName = 'Required';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -324,7 +324,8 @@ export default function MembershipForm() {
               <div className="grid grid-cols-2 gap-3">
                 {Field('First Name', 'firstName', { placeholder: 'Muhammad' })}
                 {Field('Last Name', 'lastName', { placeholder: 'Ahmad' })}
-                {Field('City', 'city', { placeholder: 'Lahore' })}
+                {Field('District', 'district', { placeholder: 'Lahore' })}
+                {Field('Membership No.', 'membershipNo', { placeholder: 'Auto / Manual', required: false } as any)}
               </div>
               <div className="mt-3">
                 <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
@@ -349,9 +350,9 @@ export default function MembershipForm() {
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 {Field('Phone Number', 'phoneNo', { placeholder: '03001234567', type: 'tel' })}
-                {Field('Email Address', 'emailAddress', { placeholder: 'you@example.com', type: 'email' })}
+                {Field('Email Address', 'emailAddress', { placeholder: 'you@example.com', type: 'email', required: false } as any)}
                 {Field('CNIC Number', 'cnicNo', { placeholder: '12345-1234567-1', maxLength: 15 })}
-                {Field('NTN Number', 'ntnNumber', { placeholder: '1234567-8' })}
+                {Field('NTN Number', 'ntnNumber', { placeholder: '1234567-8', required: false } as any)}
               </div>
             </section>
 
@@ -364,7 +365,7 @@ export default function MembershipForm() {
                 Business Information
               </h2>
               <div className="grid grid-cols-2 gap-3">
-                {Field('Business Name', 'businessName', { placeholder: 'Company / Farm name' })}
+                {Field('Business Name', 'businessName', { placeholder: 'Company / Farm name', required: false } as any)}
                 {Field('Business Type', 'businessType', { placeholder: 'e.g. Agri Farm', required: false } as any)}
               </div>
             </section>
