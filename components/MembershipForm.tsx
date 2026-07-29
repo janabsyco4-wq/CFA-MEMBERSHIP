@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const CATEGORIES = [
   { label: 'Corporate', fee: 'Rs. 30,000' },
@@ -49,11 +50,12 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       }}>{label}</div>
       {/* Value text — sits clearly above the line */}
       <div style={{
-        fontSize: '13px', color: '#111', letterSpacing: '0.3px',
+        fontSize: '13px', color: '#111', letterSpacing: '1.2px',
         lineHeight: '1.5', paddingLeft: '2px',
         marginBottom: '4px',
         whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-        minHeight: '20px'
+        minHeight: '20px',
+        textTransform: 'uppercase',
       }}>
         {value || '\u00A0'}
       </div>
@@ -77,20 +79,30 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
         <img src="/logo.jpg" alt="Logo" style={{ width: '76px', height: '76px',
           objectFit: 'contain', marginRight: '18px' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: '21px', fontWeight: 'bold', color: '#15803d',
-            letterSpacing: '2px', textTransform: 'uppercase' }}>
-            Chamber of Food &amp; Agriculture
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#15803d',
+            letterSpacing: '1.5px', textTransform: 'uppercase', lineHeight: '1.3' }}>
+            Chamber of Food and Agriculture,
           </div>
-          <div style={{ fontSize: '12px', color: '#444', marginTop: '4px', letterSpacing: '1px' }}>
-            MEMBERSHIP REGISTRATION FORM
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#15803d',
+            letterSpacing: '1.5px', textTransform: 'uppercase', marginTop: '2px' }}>
+            Pakistan
+          </div>
+          <div style={{ fontSize: '12px', color: '#444', marginTop: '6px', letterSpacing: '2px', textTransform: 'uppercase' }}>
+            Membership Registration Form
           </div>
         </div>
         <div style={{ marginLeft: '18px', textAlign: 'center' }}>
-          <div style={{ width: '88px', height: '108px', border: '2px solid #333',
+          <div style={{ width: '114px', height: '140px', border: '2px solid #333',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backgroundColor: '#f5f5f5', overflow: 'hidden' }}>
             {form.photo
-              ? <img src={form.photo} alt="Photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ? <div style={{
+                  width: '114px', height: '140px',
+                  backgroundImage: `url(${form.photo})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'top center',
+                  backgroundRepeat: 'no-repeat',
+                }} />
               : <span style={{ fontSize: '10px', color: '#999', textAlign: 'center', padding: '4px' }}>Passport<br />Photo</span>}
           </div>
           <div style={{ fontSize: '10px', color: '#666', marginTop: '3px' }}>Applicant Photo</div>
@@ -127,21 +139,42 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       {/* Declaration */}
       <div style={{ marginTop: '10px', padding: '11px 13px', border: '1px solid #ccc',
         borderRadius: '4px', backgroundColor: '#fafafa' }}>
+        <div style={{ fontSize: '11px', fontWeight: '700', color: '#333', marginBottom: '5px',
+          textTransform: 'uppercase', letterSpacing: '1px' }}>Declaration</div>
         <p style={{ fontSize: '11px', color: '#555', margin: 0, lineHeight: '1.7' }}>
           I hereby declare that all the information provided above is true and correct to the best of my knowledge.
           I agree to abide by the rules and regulations of the Chamber of Food &amp; Agriculture Pakistan.
         </p>
       </div>
 
-      {/* Signatures */}
-      <div style={{ marginTop: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        {['Applicant Signature', 'Date', 'Office Use Only'].map(lbl => (
-          <div key={lbl} style={{ textAlign: 'center', flex: 1 }}>
-            <div style={{ borderBottom: '1.5px solid #333', marginBottom: '5px',
-              marginLeft: '10px', marginRight: '10px', minHeight: '30px' }} />
-            <span style={{ fontSize: '10px', color: '#555' }}>{lbl}</span>
+      {/* Signature row */}
+      <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        {/* Date left */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#333', paddingBottom: '3px' }}>Date:</span>
+            <span style={{ fontSize: '11px', color: '#111', letterSpacing: '1px', paddingBottom: '3px', paddingLeft: '4px' }}>
+              {new Date().toLocaleDateString('en-PK', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </span>
           </div>
-        ))}
+        </div>
+        {/* Applicant Signature + Office Use Only on right */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '200px', height: '1.5px', backgroundColor: '#333', marginBottom: '5px' }} />
+            <span style={{ fontSize: '10px', color: '#555' }}>Applicant Signature</span>
+          </div>
+          <div style={{ width: '220px', border: '1px solid #333', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ borderBottom: '1px solid #333', fontSize: '10px', fontWeight: '700',
+              textAlign: 'center', padding: '3px 8px', letterSpacing: '0.5px', color: '#333', backgroundColor: '#fff' }}>
+              FOR OFFICE USE ONLY
+            </div>
+            <div style={{ height: '52px', padding: '6px 8px', backgroundColor: '#fff' }}>
+              <div style={{ fontSize: '10px', color: '#555', marginBottom: '20px' }}>President's Signature:</div>
+              <div style={{ height: '1.5px', backgroundColor: '#333' }} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
@@ -166,6 +199,7 @@ export default function MembershipForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const titleCase = (str: string) => str.replace(/\b\w/g, c => c.toUpperCase());
     if (name === 'cnicNo') {
       const digits = value.replace(/\D/g, '').slice(0, 13);
       let formatted = digits;
@@ -181,7 +215,9 @@ export default function MembershipForm() {
       setErrors(err => ({ ...err, membershipCategory: '' }));
       return;
     }
-    setForm(f => ({ ...f, [name]: value }));
+    const skipCapitalize = ['emailAddress', 'phoneNo', 'ntnNumber', 'membershipNo'];
+    const newValue = skipCapitalize.includes(name) ? value : titleCase(value);
+    setForm(f => ({ ...f, [name]: newValue }));
     setErrors(err => ({ ...err, [name]: '' }));
   };
 
@@ -215,14 +251,31 @@ export default function MembershipForm() {
     setDownloading(true);
     try {
       const el = printRef.current!;
-      const canvas = await html2canvas(el, {
+      const clone = el.cloneNode(true) as HTMLElement;
+      clone.style.position = 'fixed';
+      clone.style.top = '0';
+      clone.style.left = '0';
+      clone.style.zIndex = '-9999';
+      clone.style.width = '794px';
+      clone.style.visibility = 'visible';
+      document.body.appendChild(clone);
+      await new Promise(r => setTimeout(r, 200));
+      const canvas = await html2canvas(clone, {
         scale: 3, useCORS: true, backgroundColor: '#ffffff',
-        logging: false, width: el.offsetWidth, height: el.offsetHeight,
+        logging: false, width: 794, height: clone.scrollHeight, windowWidth: 794,
       });
-      const link = document.createElement('a');
-      link.download = `membership-${form.firstName}-${form.lastName}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 1.0);
-      link.click();
+      document.body.removeChild(clone);
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, pageWidth, imgHeight);
+      } else {
+        const scaledWidth = (canvas.width * pageHeight) / canvas.height;
+        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', (pageWidth - scaledWidth) / 2, 0, scaledWidth, pageHeight);
+      }
+      pdf.save(`membership-${form.firstName}-${form.lastName}.pdf`);
     } finally {
       setDownloading(false);
     }
@@ -231,7 +284,7 @@ export default function MembershipForm() {
   const handleReset = () => { setForm(INITIAL); setErrors({}); setSubmitted(false); };
 
   const inputCls = (name: keyof FormData) =>
-    `w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-all ${
+    `w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-all capitalize ${
       errors[name]
         ? 'border-red-400 bg-red-50 focus:ring-2 focus:ring-red-200'
         : 'border-gray-300 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100'
