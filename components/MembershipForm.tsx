@@ -238,7 +238,6 @@ export default function MembershipForm() {
     const e: Partial<FormData> = {};
     if (!form.firstName.trim()) e.firstName = 'Required';
     if (!form.lastName.trim()) e.lastName = 'Required';
-    if (!form.fatherName.trim()) e.fatherName = 'Required';
     if (!form.address.trim()) e.address = 'Required';
     if (!form.district.trim()) e.district = 'Required';
     if (!/^(\+92|0)[0-9]{10}$/.test(form.phoneNo.replace(/\s/g, '')))
@@ -383,7 +382,7 @@ export default function MembershipForm() {
               <div className="grid grid-cols-2 gap-3">
                 {Field('First Name', 'firstName', { placeholder: 'Muhammad' })}
                 {Field('Last Name', 'lastName', { placeholder: 'Ahmad' })}
-                {Field("Father's Name", 'fatherName', { placeholder: "Father's full name" })}
+                {Field("Father's Name", 'fatherName', { placeholder: "Father's full name", required: false } as any)}
                 {Field('District', 'district', { placeholder: 'Lahore' })}
                 {Field('Membership No.', 'membershipNo', { placeholder: 'Auto / Manual', required: false } as any)}
               </div>
