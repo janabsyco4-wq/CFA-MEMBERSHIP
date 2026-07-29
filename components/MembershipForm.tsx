@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const CATEGORIES = [
   { label: 'Corporate', fee: 'Rs. 30,000' },
@@ -49,11 +50,12 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       }}>{label}</div>
       {/* Value text — sits clearly above the line */}
       <div style={{
-        fontSize: '13px', color: '#111', letterSpacing: '0.3px',
+        fontSize: '13px', color: '#111', letterSpacing: '1.2px',
         lineHeight: '1.5', paddingLeft: '2px',
         marginBottom: '4px',
         whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-        minHeight: '20px'
+        minHeight: '20px',
+        textTransform: 'uppercase',
       }}>
         {value || '\u00A0'}
       </div>
@@ -68,7 +70,7 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
   );
 
   return (
-    <div ref={innerRef} style={{ width: '794px', minHeight: '1060px', backgroundColor: '#fff',
+    <div ref={innerRef} style={{ width: '794px', backgroundColor: '#fff',
       fontFamily: 'Arial, sans-serif', padding: '44px', boxSizing: 'border-box' }}>
 
       {/* Header */}
@@ -77,20 +79,31 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
         <img src="/logo.jpg" alt="Logo" style={{ width: '76px', height: '76px',
           objectFit: 'contain', marginRight: '18px' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: '21px', fontWeight: 'bold', color: '#15803d',
-            letterSpacing: '2px', textTransform: 'uppercase' }}>
-            Chamber of Food &amp; Agriculture
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#15803d',
+            letterSpacing: '1.5px', textTransform: 'uppercase', lineHeight: '1.3' }}>
+            Chamber of Food and Agriculture,
           </div>
-          <div style={{ fontSize: '12px', color: '#444', marginTop: '4px', letterSpacing: '1px' }}>
-            MEMBERSHIP REGISTRATION FORM
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#15803d',
+            letterSpacing: '1.5px', textTransform: 'uppercase', marginTop: '2px' }}>
+            Pakistan
+          </div>
+          <div style={{ fontSize: '12px', color: '#444', marginTop: '6px', letterSpacing: '2px', textTransform: 'uppercase' }}>
+            Membership Registration Form
           </div>
         </div>
         <div style={{ marginLeft: '18px', textAlign: 'center' }}>
-          <div style={{ width: '88px', height: '108px', border: '2px solid #333',
+          <div style={{ width: '114px', height: '140px', border: '2px solid #333',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backgroundColor: '#f5f5f5', overflow: 'hidden' }}>
+            backgroundColor: '#f5f5f5', overflow: 'hidden', flexShrink: 0 }}>
             {form.photo
-              ? <img src={form.photo} alt="Photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ? <div style={{
+                  width: '114px', height: '140px',
+                  backgroundImage: `url(${form.photo})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'top center',
+                  backgroundRepeat: 'no-repeat',
+                  flexShrink: 0,
+                }} />
               : <span style={{ fontSize: '10px', color: '#999', textAlign: 'center', padding: '4px' }}>Passport<br />Photo</span>}
           </div>
           <div style={{ fontSize: '10px', color: '#666', marginTop: '3px' }}>Applicant Photo</div>
@@ -127,21 +140,46 @@ function FormPreview({ form, innerRef }: { form: FormData; innerRef?: React.Ref<
       {/* Declaration */}
       <div style={{ marginTop: '10px', padding: '11px 13px', border: '1px solid #ccc',
         borderRadius: '4px', backgroundColor: '#fafafa' }}>
+        <div style={{ fontSize: '11px', fontWeight: '700', color: '#333', marginBottom: '5px',
+          textTransform: 'uppercase', letterSpacing: '1px' }}>Declaration</div>
         <p style={{ fontSize: '11px', color: '#555', margin: 0, lineHeight: '1.7' }}>
           I hereby declare that all the information provided above is true and correct to the best of my knowledge.
           I agree to abide by the rules and regulations of the Chamber of Food &amp; Agriculture Pakistan.
         </p>
       </div>
 
-      {/* Signatures */}
-      <div style={{ marginTop: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        {['Applicant Signature', 'Date', 'Office Use Only'].map(lbl => (
-          <div key={lbl} style={{ textAlign: 'center', flex: 1 }}>
-            <div style={{ borderBottom: '1.5px solid #333', marginBottom: '5px',
-              marginLeft: '10px', marginRight: '10px', minHeight: '30px' }} />
-            <span style={{ fontSize: '10px', color: '#555' }}>{lbl}</span>
+      {/* Applicant Signature on right + Date left + Office Use box below signature */}
+      <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        {/* Date left — bottom aligned */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#333', whiteSpace: 'nowrap', paddingBottom: '3px' }}>Date:</span>
+            <span style={{ fontSize: '11px', color: '#111', letterSpacing: '1px', paddingBottom: '3px', paddingLeft: '4px' }}>
+              {new Date().toLocaleDateString('en-PK', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </span>
           </div>
-        ))}
+        </div>
+
+        {/* Applicant Signature + For Office Use Only stacked on right */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+          {/* Applicant Signature */}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '200px', height: '1.5px', backgroundColor: '#333', marginBottom: '5px' }} />
+            <span style={{ fontSize: '10px', color: '#555' }}>Applicant Signature</span>
+          </div>
+          {/* For Office Use Only box */}
+          <div style={{ width: '220px', border: '1px solid #333', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ borderBottom: '1.5px solid #333', fontSize: '10px', fontWeight: '700',
+              textAlign: 'center', padding: '3px 8px', letterSpacing: '0.5px', color: '#333',
+              backgroundColor: '#fff' }}>
+              FOR OFFICE USE ONLY
+            </div>
+            <div style={{ height: '52px', padding: '6px 8px', backgroundColor: '#fff' }}>
+              <div style={{ fontSize: '10px', color: '#555', marginBottom: '20px' }}>President's Signature:</div>
+              <div style={{ height: '1.5px', backgroundColor: '#333' }} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
@@ -166,6 +204,10 @@ export default function MembershipForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    // Auto capitalize first letter of each word for text fields
+    const titleCase = (str: string) => str.replace(/\b\w/g, c => c.toUpperCase());
+
     if (name === 'cnicNo') {
       const digits = value.replace(/\D/g, '').slice(0, 13);
       let formatted = digits;
@@ -181,7 +223,10 @@ export default function MembershipForm() {
       setErrors(err => ({ ...err, membershipCategory: '' }));
       return;
     }
-    setForm(f => ({ ...f, [name]: value }));
+    // Skip capitalization for email, phone, ntn, cnic
+    const skipCapitalize = ['emailAddress', 'phoneNo', 'ntnNumber', 'membershipNo'];
+    const newValue = skipCapitalize.includes(name) ? value : titleCase(value);
+    setForm(f => ({ ...f, [name]: newValue }));
     setErrors(err => ({ ...err, [name]: '' }));
   };
 
@@ -215,14 +260,31 @@ export default function MembershipForm() {
     setDownloading(true);
     try {
       const el = printRef.current!;
+      el.style.visibility = 'visible';
+      await new Promise(r => setTimeout(r, 100));
       const canvas = await html2canvas(el, {
-        scale: 3, useCORS: true, backgroundColor: '#ffffff',
-        logging: false, width: el.offsetWidth, height: el.offsetHeight,
+        scale: 5, useCORS: true, backgroundColor: '#ffffff',
+        logging: false, width: 794, height: el.scrollHeight, windowWidth: 794,
+        imageTimeout: 0,
       });
-      const link = document.createElement('a');
-      link.download = `membership-${form.firstName}-${form.lastName}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 1.0);
-      link.click();
+      el.style.visibility = 'hidden';
+
+      // A4 PDF
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+      } else {
+        const scaledWidth = (canvas.width * pageHeight) / canvas.height;
+        const xOffset = (pageWidth - scaledWidth) / 2;
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOffset, 0, scaledWidth, pageHeight);
+      }
+
+      pdf.save(`membership-${form.firstName}-${form.lastName}.pdf`);
     } finally {
       setDownloading(false);
     }
@@ -231,7 +293,7 @@ export default function MembershipForm() {
   const handleReset = () => { setForm(INITIAL); setErrors({}); setSubmitted(false); };
 
   const inputCls = (name: keyof FormData) =>
-    `w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-all ${
+    `w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-all capitalize ${
       errors[name]
         ? 'border-red-400 bg-red-50 focus:ring-2 focus:ring-red-200'
         : 'border-gray-300 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100'
@@ -412,7 +474,7 @@ export default function MembershipForm() {
               <div className="flex items-center gap-4">
                 <div className="w-20 h-24 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden flex items-center justify-center bg-gray-50 flex-shrink-0">
                   {form.photo
-                    ? <img src={form.photo} alt="Preview" className="w-full h-full object-cover" />
+                    ? <img src={form.photo} alt="Preview" className="w-full h-full object-cover block" style={{ width: '80px', height: '96px', objectFit: 'cover' }} />
                     : <span className="text-xs text-gray-400 text-center px-1">No photo</span>}
                 </div>
                 <label className="cursor-pointer inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-all shadow-sm">
@@ -446,7 +508,7 @@ export default function MembershipForm() {
                   ) : (
                     <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>Download Form</>
+                    </svg>Download PDF (A4)</>
                   )}
                 </button>
               </div>
@@ -470,11 +532,11 @@ export default function MembershipForm() {
             </div>
             <div className="overflow-auto bg-gray-100 p-3">
               <div style={{ transform: 'scale(0.6)', transformOrigin: 'top left',
-                width: '794px', height: '690px', flexShrink: 0, pointerEvents: 'none' }}>
+                width: '794px', flexShrink: 0, pointerEvents: 'none' }}>
                 <FormPreview form={form} />
               </div>
               {/* invisible spacer so container has correct height */}
-              <div style={{ height: `${690 * 0.6}px` }} />
+              <div style={{ height: '500px' }} />
             </div>
           </div>
         </div>
